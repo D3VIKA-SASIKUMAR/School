@@ -13,8 +13,10 @@ class OrganizerBnb extends StatefulWidget {
 class _OrganizerBnbState extends State<OrganizerBnb> {
   int indexnum = 0;
 
+  final String organizerId = "organizerId"; // Replace with actual ID
+
   final List<Widget> tabWidgets = [
-    const OrganizerHomepage(),
+    OrganizerHomepage(),
     const OrganizerEventpage(),
     const OrganizerAppealpage(),
   ];

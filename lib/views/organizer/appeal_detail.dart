@@ -51,16 +51,6 @@ class _AppealDetailState extends State<AppealDetail> {
               },
             ),
             SizedBox(height: size.height * 0.03),
-            RegisterTextformfield(
-              text: "Video Link",
-              controller: __videolink,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter your event name';
-                }
-                return null;
-              },
-            ),
             SizedBox(height: size.height * 0.03),
             Row(
               children: [

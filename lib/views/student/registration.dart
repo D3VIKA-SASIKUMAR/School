@@ -1,5 +1,10 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
-import 'package:mini_project/views/student/home_screen.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:mini_project/services/authservices/auth_services.dart';
+import 'package:mini_project/views/student/login_page.dart';
 import 'package:mini_project/widgets/button.dart';
 import 'package:mini_project/widgets/register_textformfield.dart';
 import 'package:mini_project/widgets/text.dart';
@@ -124,12 +129,7 @@ class _StudentRegistrationState extends State<StudentRegistration> {
                     text: "Submit",
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => StudentHomeScreen(),
-                          ),
-                        );
+                        studentRegistration();
                       }
                     },
                   ),
@@ -140,5 +140,20 @@ class _StudentRegistrationState extends State<StudentRegistration> {
         ),
       ),
     );
+  }
+
+  studentRegistration() async {
+    try {
+      await StudentAuthServices().studentRegistration(
+          _nameController.text,
+          _emailController.text,
+          _passwordController.text,
+          _phnoController.text,
+          _idnoController.text,
+          _departmentController.text);
+      Get.to(() => LoginPage());
+    } catch (e) {
+      log(e.toString());
+    }
   }
 }

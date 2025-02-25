@@ -1,12 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mini_project/views/student/event_apply.dart';
-import 'package:mini_project/widgets/button.dart';
 
 class StudentEventDetail extends StatelessWidget {
   final String eventName;
+  final String date;
+  final String stageNo;
+  final String time;
 
-  const StudentEventDetail({super.key, required this.eventName});
+  const StudentEventDetail({
+    super.key,
+    required this.eventName,
+    required this.date,
+    required this.stageNo,
+    required this.time,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -23,12 +30,10 @@ class StudentEventDetail extends StatelessWidget {
                 Row(
                   children: [
                     IconButton(
-                      onPressed: () {
-                        Get.back();
-                      },
+                      onPressed: () => Get.back(),
                       icon: Icon(Icons.arrow_back_ios, size: size.width * 0.06),
                     ),
-                    Spacer(),
+                    const Spacer(),
                     Text(
                       "Event Detail",
                       style: TextStyle(
@@ -37,12 +42,12 @@ class StudentEventDetail extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    Spacer(),
+                    const Spacer(),
                   ],
                 ),
                 SizedBox(height: size.height * 0.08),
-                CircleAvatar(
-                  radius: size.width * 0.12,
+                const CircleAvatar(
+                  radius: 50,
                   backgroundImage: AssetImage('images/user.png'),
                 ),
                 SizedBox(height: size.height * 0.04),
@@ -55,107 +60,41 @@ class StudentEventDetail extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: size.height * 0.08),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Text(
-                      "Date:",
-                      style: TextStyle(
-                        fontFamily: 'Poppins',
-                        fontSize: size.width * 0.045,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                    Text(
-                      "12/12/2021",
-                      style: TextStyle(
-                        fontFamily: 'Poppins',
-                        fontSize: size.width * 0.045,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: size.height * 0.02),
-                Row(
-                  children: [
-                    SizedBox(width: size.width * 0.18),
-                    Text(
-                      "Stage No:",
-                      style: TextStyle(
-                        fontFamily: 'Poppins',
-                        fontSize: size.width * 0.045,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                    SizedBox(width: size.width * 0.1),
-                    Text(
-                      "02",
-                      style: TextStyle(
-                        fontFamily: 'Poppins',
-                        fontSize: size.width * 0.045,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: size.height * 0.02),
-                Row(
-                  children: [
-                    SizedBox(width: size.width * 0.18),
-                    Text(
-                      "Time:",
-                      style: TextStyle(
-                        fontFamily: 'Poppins',
-                        fontSize: size.width * 0.045,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                    SizedBox(width: size.width * 0.2),
-                    Text(
-                      "1:30 pm",
-                      style: TextStyle(
-                        fontFamily: 'Poppins',
-                        fontSize: size.width * 0.045,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: size.height * 0.02),
-                Row(
-                  children: [
-                    SizedBox(width: size.width * 0.18),
-                    Text(
-                      "Location:",
-                      style: TextStyle(
-                        fontFamily: 'Poppins',
-                        fontSize: size.width * 0.045,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                    SizedBox(width: size.width * 0.12),
-                    Text(
-                      "Ground",
-                      style: TextStyle(
-                        fontFamily: 'Poppins',
-                        fontSize: size.width * 0.045,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: size.height * 0.25),
-                CustomElevatedButton(
-                  text: "Apply",
-                  onPressed: () {
-                    Get.to(() => EventApply());
-                  },
-                )
+                buildDetailRow("Date:", date, size),
+                buildDetailRow("Stage No:", stageNo, size),
+                buildDetailRow("Time:", time, size),
               ],
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget buildDetailRow(String label, String value, Size size) {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: size.height * 0.01),
+      child: Row(
+        children: [
+          SizedBox(width: size.width * 0.18),
+          Text(
+            label,
+            style: TextStyle(
+              fontFamily: 'Poppins',
+              fontSize: size.width * 0.045,
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+          SizedBox(width: size.width * 0.1),
+          Text(
+            value,
+            style: TextStyle(
+              fontFamily: 'Poppins',
+              fontSize: size.width * 0.045,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
       ),
     );
   }

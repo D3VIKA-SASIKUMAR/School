@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:mini_project/views/admin/admin_event.dart';
 import 'package:mini_project/views/admin/admin_homepage.dart';
 import 'package:mini_project/views/admin/admin_organizer.dart';
@@ -19,6 +20,11 @@ class _AdminBottomNavigationBarState extends State<AdminBottomNavigationBar> {
     const AdminOrganizer(),
     const AdminEvent(),
   ];
+  @override
+  void initState() {
+    super.initState();
+    indexnum = Get.arguments?['selectedIndex'] ?? 0;
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -128,7 +128,7 @@ class _UpdateResultState extends State<UpdateResult> {
             CustomElevatedButton(
               text: "Submit",
               onPressed: () {
-                Get.to(AppealList());
+                // Get.to(AppealList());
               },
             )
           ],

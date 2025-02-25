@@ -1,6 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mini_project/views/admin/add_event.dart';
+import 'package:mini_project/widgets/text.dart';
 
 class AdminEvent extends StatefulWidget {
   const AdminEvent({super.key});
@@ -15,155 +17,137 @@ class _AdminEventState extends State<AdminEvent> {
     final size = MediaQuery.of(context).size;
 
     return SafeArea(
-        child: Scaffold(
-      body: Column(
-        children: [
-          SizedBox(height: size.height * 0.03),
-          Center(
-            child: Text(
-              "Event",
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w500,
-                fontFamily: 'Poppins-BoldItalic.ttf',
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(15.0),
-            child: Container(
-              height: size.height * 0.2,
-              decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 85, 141, 187),
-                  borderRadius: BorderRadius.circular(8)),
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      SizedBox(
-                        width: size.width * 0.3,
-                      ),
-                      SizedBox(
-                        height: size.height * 0.05,
-                      ),
-                      Text(
-                        "Mohiniyattam",
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w500,
-                            fontFamily: 'Poppins'),
-                      ),
-                      SizedBox(width: size.width * 0.16),
-                      IconButton(
-                        onPressed: () {},
-                        icon: Icon(
-                          Icons.delete,
-                          color: const Color.fromARGB(255, 0, 0, 0),
-                          size: 25,
-                        ),
-                      ),
-                    ],
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 15),
-                    child: Row(
-                      children: [
-                        Text(
-                          "Date:",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontFamily: 'Poppins',
-                            fontSize: size.width * 0.04,
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                        Text(
-                          "12/12/2021",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontFamily: 'Poppins',
-                            fontSize: size.width * 0.04,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 15),
-                    child: Row(
-                      children: [
-                        SizedBox(
-                          height: size.height * 0.06,
-                        ),
-                        Text(
-                          "Stage No:",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontFamily: 'Poppins',
-                            fontSize: size.width * 0.04,
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                        Text(
-                          "02",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontFamily: 'Poppins',
-                            fontSize: size.width * 0.04,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 15),
-                    child: Row(
-                      children: [
-                        Text(
-                          "Time:",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontFamily: 'Poppins',
-                            fontSize: size.width * 0.04,
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                        Text(
-                          "1:30 pm",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontFamily: 'Poppins',
-                            fontSize: size.width * 0.04,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          )
-        ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        shape: CircleBorder(),
-        backgroundColor: Colors.yellow,
-        onPressed: () {
-          Get.to(AddEvent());
+      child: Scaffold(
+        body: StreamBuilder<QuerySnapshot>(
+          stream:
+              FirebaseFirestore.instance.collection('Addevents').snapshots(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
 
-          // Navigator.push(
-          //     context, MaterialPageRoute(builder: (context) => AddEvent()));
-        },
-        child: Icon(
-          Icons.add,
-          color: Colors.white,
-          size: 40,
+            if (snapshot.hasError) {
+              return const Center(
+                child: Text('Oops! Something went wrong..'),
+              );
+            }
+
+            var events = snapshot.data?.docs;
+            if (events == null || events.isEmpty) {
+              return Center(
+                child: Text(
+                  'No Events Found',
+                  style: TextStyle(
+                    fontSize: size.width * 0.05,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              );
+            }
+
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 155, top: 25),
+                  child: BoldText(
+                    text: "EVENTS",
+                    color: Colors.black,
+                    fontSize: 24,
+                  ),
+                ),
+                Expanded(
+                  child: ListView.builder(
+                    padding: EdgeInsets.all(15),
+                    itemCount: events.length,
+                    itemBuilder: (context, index) {
+                      var eventData =
+                          events[index].data() as Map<String, dynamic>;
+
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 15),
+                        child: Container(
+                          padding: EdgeInsets.all(15),
+                          decoration: BoxDecoration(
+                            color: const Color.fromARGB(255, 85, 141, 187),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    eventData["eventName"] ?? "Unknown Event",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  IconButton(
+                                    onPressed: () async {
+                                      await FirebaseFirestore.instance
+                                          .collection('Addevents')
+                                          .doc(events[index].id)
+                                          .delete();
+                                    },
+                                    icon: Icon(Icons.delete,
+                                        color:
+                                            const Color.fromARGB(255, 0, 0, 0)),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 8),
+                              Text(
+                                "Date: ${eventData["date"] ?? "N/A"}",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: size.width * 0.04,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                              SizedBox(height: 4),
+                              Text(
+                                "Stage No: ${eventData["stageNo"] ?? "N/A"}",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: size.width * 0.04,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                              SizedBox(height: 4),
+                              Text(
+                                "Time: ${eventData["time"] ?? "N/A"}",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: size.width * 0.04,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
+        floatingActionButton: FloatingActionButton(
+          shape: CircleBorder(),
+          backgroundColor: Colors.yellow,
+          onPressed: () {
+            Get.to(() => AddEvent());
+          },
+          child: Icon(Icons.add,
+              color: const Color.fromARGB(255, 0, 0, 0), size: 40),
         ),
       ),
-    ));
+    );
   }
 }

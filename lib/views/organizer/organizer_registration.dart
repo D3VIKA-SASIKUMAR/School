@@ -1,5 +1,9 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
-import 'package:mini_project/views/organizer/organizer_bnb.dart';
+import 'package:get/get.dart';
+import 'package:mini_project/services/authservices/organizer_auth_services.dart';
+import 'package:mini_project/views/organizer/organizer_login.dart';
 import 'package:mini_project/widgets/button.dart';
 import 'package:mini_project/widgets/register_textformfield.dart';
 import 'package:mini_project/widgets/text.dart';
@@ -115,12 +119,7 @@ class _OrganizerRegistrationState extends State<OrganizerRegistration> {
                     text: "Submit",
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => OrganizerBnb(),
-                          ),
-                        );
+                        organizerRegistration();
                       }
                     },
                   ),
@@ -131,5 +130,19 @@ class _OrganizerRegistrationState extends State<OrganizerRegistration> {
         ),
       ),
     );
+  }
+
+  organizerRegistration() async {
+    try {
+      await OrganizerAuthServices().organizerRegistration(
+          _organizerUsername.text,
+          _organizerEmail.text,
+          _organizerPassword.text,
+          _organizerphnoController.text,
+          _organizerid.text);
+      Get.to(() => OrganizerLogin());
+    } catch (e) {
+      log(e.toString());
+    }
   }
 }

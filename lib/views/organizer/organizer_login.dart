@@ -1,5 +1,10 @@
+import 'dart:developer';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mini_project/services/authservices/organizer_auth_services.dart';
 import 'package:mini_project/views/organizer/organizer_bnb.dart';
 import 'package:mini_project/views/organizer/organizer_registration.dart';
 
@@ -16,7 +21,7 @@ class OrganizerLogin extends StatefulWidget {
 
 class _OrganizerLoginState extends State<OrganizerLogin> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _organizerUsername = TextEditingController();
+  final TextEditingController _organizerEmail = TextEditingController();
   final TextEditingController _organizerPassword = TextEditingController();
 
   @override
@@ -45,12 +50,12 @@ class _OrganizerLoginState extends State<OrganizerLogin> {
 
                   // Username field
                   CustomTextFormField(
-                    controller: _organizerUsername,
-                    hintText: "Username",
+                    controller: _organizerEmail,
+                    hintText: "Email",
                     icon: Icons.person,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return "Username is required";
+                        return "Email is required";
                       }
                       return null;
                     },
@@ -71,20 +76,19 @@ class _OrganizerLoginState extends State<OrganizerLogin> {
                       return null;
                     },
                   ),
-                  SizedBox(height: screenHeight * 0.05), // 5% of screen height
+                  SizedBox(height: screenHeight * 0.05),
 
                   // Login button
                   CustomElevatedButton(
                     text: "Login",
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
-                        Get.to(() => OrganizerBnb());
+                        organizerLogIn();
                       }
                     },
                   ),
-                  SizedBox(height: screenHeight * 0.05), // 5% of screen height
+                  SizedBox(height: screenHeight * 0.05),
 
-                  // Create account text
                   TextButton(
                     onPressed: () {
                       Navigator.push(
@@ -110,5 +114,41 @@ class _OrganizerLoginState extends State<OrganizerLogin> {
         ),
       ),
     );
+  }
+
+  organizerLogIn() async {
+    try {
+      UserCredential? userCredential =
+          await OrganizerAuthServices().organizerLogin(
+        _organizerEmail.text,
+        _organizerPassword.text,
+      );
+      if (userCredential?.user != null) {
+        Get.to(() => OrganizerBnb());
+        // Fetch the organizer's ID from Firestore
+        QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+            .collection('OrganizerRegister')
+            .where('email', isEqualTo: _organizerEmail.text)
+            .limit(1)
+            .get();
+
+        /// Checks if the query snapshot contains any documents.
+        ///
+        /// If the query snapshot is not empty, it indicates that there are
+        /// documents present in the collection being queried.
+        if (querySnapshot.docs.isNotEmpty) {
+          DocumentSnapshot organizerDoc = querySnapshot.docs.first;
+          String organizerId = organizerDoc.id;
+          log('Organizer ID: $organizerId');
+        } else {
+          log('Organizer document does not exist');
+        }
+      } else {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text("Invalid Email or Password")));
+      }
+    } catch (e) {
+      log(e.toString());
+    }
   }
 }

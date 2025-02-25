@@ -10,7 +10,7 @@ class BoldText extends StatelessWidget {
     super.key,
     required this.text,
     this.fontSize = 30.0,
-    this.color = const Color.fromARGB(255, 15, 52, 82),
+    this.color = const Color.fromARGB(255, 0, 0, 0),
     this.fontFamily = 'Poppins',
   });
 

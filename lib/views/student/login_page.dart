@@ -1,7 +1,11 @@
+import 'dart:developer';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mini_project/views/student/home_screen.dart';
+import 'package:mini_project/services/authservices/auth_services.dart';
+import 'package:mini_project/views/student/student_home_screen.dart';
 import 'package:mini_project/views/student/registration.dart';
+import 'package:mini_project/views/student/studentbottomnavigationbar.dart';
 import 'package:mini_project/widgets/button.dart';
 import 'package:mini_project/widgets/text.dart';
 import 'package:mini_project/widgets/login_textformfield.dart';
@@ -15,7 +19,7 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
   @override
@@ -42,12 +46,12 @@ class _LoginPageState extends State<LoginPage> {
 
                   // Username field
                   CustomTextFormField(
-                    controller: _usernameController,
-                    hintText: "Username",
+                    controller: _emailController,
+                    hintText: "email",
                     icon: Icons.person,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return "Username is required";
+                        return "email is required";
                       }
                       return null;
                     },
@@ -74,9 +78,7 @@ class _LoginPageState extends State<LoginPage> {
                   CustomElevatedButton(
                     text: "Login",
                     onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        Get.to(() => StudentHomeScreen());
-                      }
+                      studentLogIn();
                     },
                   ),
                   SizedBox(height: screenHeight * 0.05), // 5% of screen height
@@ -108,5 +110,20 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
     );
+  }
+
+  studentLogIn() async {
+    try {
+      UserCredential? userCredential = await StudentAuthServices()
+          .studentLogin(_emailController.text, _passwordController.text);
+      if (userCredential?.user != null) {
+        Get.to(() => Studentbottomnavigationbar());
+      } else {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text("Invalid Email or Password")));
+      }
+    } catch (e) {
+      log(e.toString());
+    }
   }
 }
